@@ -24,6 +24,14 @@ namespace RestaurantAPI.Entities
             modelBuilder.Entity<Dish>()
                 .Property(d => d.Name)
                 .IsRequired();
+            modelBuilder.Entity<Address>()
+                .Property(a => a.City)
+                .HasMaxLength(50)
+                .IsRequired();
+            modelBuilder.Entity<Address>()
+                .Property(a => a.Street)
+                .HasMaxLength(50)
+                .IsRequired();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
