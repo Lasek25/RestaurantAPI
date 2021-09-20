@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace RestaurantAPI.Controllers
 {
     [Route("api/restaurant")]
+    [ApiController]
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
@@ -31,10 +32,11 @@ namespace RestaurantAPI.Controllers
         [HttpPost]
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto dto)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            // Not necessary if attribute [ApiController] exists
+            //if(!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             var id = _restaurantService.Create(dto);
             return Created($"api/restaurant/{id}", null);
         }
@@ -43,31 +45,26 @@ namespace RestaurantAPI.Controllers
         public ActionResult<RestaurantDto> Get([FromRoute] int id)
         {
             var restaurant = _restaurantService.GeyById(id);
-            if (restaurant is null)
-                return NotFound();
             return Ok(restaurant);
         }
         
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var isDeletedRestaurant = _restaurantService.Delete(id);
-            if (isDeletedRestaurant)
-                return NoContent();
-            return NotFound();
+            _restaurantService.Delete(id);
+            return NoContent();
         }
 
         [HttpPut("{id}")]
         public ActionResult Update([FromRoute] int id, [FromBody] UpdateRestaurantDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var isUpdated = _restaurantService.Update(id, dto);
-            if (isUpdated)
-                return Ok();
-            return NotFound();
+            // Not necessary if attribute [ApiController] exists
+            //if(!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+            _restaurantService.Update(id, dto);
+            return Ok();
         }
     }
 }
