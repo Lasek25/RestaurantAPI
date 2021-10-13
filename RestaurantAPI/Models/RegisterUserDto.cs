@@ -9,15 +9,16 @@ namespace RestaurantAPI.Models
 {
     public class RegisterUserDto
     {
-        [Required]
-        [EmailAddress]
+        //[Required]
+        //[EmailAddress]
         public string Email { get; set; }
-        [Required]
-        [RegularExpression(
-            @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$",
-            ErrorMessage = "Password must contain min. 6 characters, min. one upper letter, min. one lower letter and min. one digit"
-        )]
+        //[Required]
+        //[RegularExpression(
+        //    @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$",
+        //    ErrorMessage = "Password must contain min. 6 characters, min. one upper letter, min. one lower letter and min. one digit"
+        //)]
         public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
         public string Nationality { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int RoleId { get; set; } = 1;
