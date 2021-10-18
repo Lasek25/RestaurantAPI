@@ -26,7 +26,8 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        //[AllowAnonymous]
+        [Authorize(Policy = "CreatedRestaurantsOver")]
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantsDtos = _restaurantService.GetAll();
@@ -43,7 +44,7 @@ namespace RestaurantAPI.Controllers
             //    return BadRequest(ModelState);
             //}
             var userId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var id = _restaurantService.Create(dto, userId);
+            var id = _restaurantService.Create(dto);
             return Created($"api/restaurant/{id}", null);
         }
 
@@ -59,7 +60,7 @@ namespace RestaurantAPI.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            _restaurantService.Delete(id, User);
+            _restaurantService.Delete(id);
             return NoContent();
         }
 
@@ -71,7 +72,7 @@ namespace RestaurantAPI.Controllers
             //{
             //    return BadRequest(ModelState);
             //}
-            _restaurantService.Update(id, dto, User);
+            _restaurantService.Update(id, dto);
             return Ok();
         }
     }

@@ -64,6 +64,7 @@ namespace RestaurantAPI
             {
                 options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "Germany", "Poland"));
                 options.AddPolicy("AgeOver", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
+                options.AddPolicy("CreatedRestaurantsOver", builder => builder.AddRequirements(new CreatedMultipleRestaurantsRequirement(2)));
             });
             services.AddControllers().AddFluentValidation();
             services.AddSwaggerGen(c =>
@@ -72,6 +73,7 @@ namespace RestaurantAPI
             });
             services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
+            services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
             services.AddDbContext<RestaurantDbContext>();
             services.AddScoped<RestaurantSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
@@ -83,6 +85,8 @@ namespace RestaurantAPI
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
+            services.AddScoped<IUserContextService, UserContextService>();
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
