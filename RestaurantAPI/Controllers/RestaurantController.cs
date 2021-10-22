@@ -26,12 +26,19 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpGet]
-        //[AllowAnonymous]
-        [Authorize(Policy = "CreatedRestaurantsOver")]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantsDtos = _restaurantService.GetAll();
             return Ok(restaurantsDtos);
+        }
+
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public ActionResult<RestaurantDto> Get([FromRoute] int id)
+        {
+            var restaurant = _restaurantService.GeyById(id);
+            return Ok(restaurant);
         }
 
         [HttpPost]
@@ -47,17 +54,11 @@ namespace RestaurantAPI.Controllers
             var id = _restaurantService.Create(dto);
             return Created($"api/restaurant/{id}", null);
         }
-
-        [HttpGet("{id}")]
-        //[Authorize(Policy = "HasNationality")]
-        [Authorize(Policy = "AgeOver")]
-        public ActionResult<RestaurantDto> Get([FromRoute] int id)
-        {
-            var restaurant = _restaurantService.GeyById(id);
-            return Ok(restaurant);
-        }
         
         [HttpDelete("{id}")]
+        //[Authorize(Policy = "HasNationality")]
+        [Authorize(Policy = "AgeOver")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Delete([FromRoute] int id)
         {
             _restaurantService.Delete(id);
@@ -65,6 +66,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Update([FromRoute] int id, [FromBody] UpdateRestaurantDto dto)
         {
             // Not necessary if attribute [ApiController] exists

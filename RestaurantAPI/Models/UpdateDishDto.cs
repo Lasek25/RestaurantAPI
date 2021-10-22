@@ -12,6 +12,6 @@ namespace RestaurantAPI.Models
         [Required]
         public string Description { get; set; }
         [Required]
-        public decimal Price { get; set; }
+        public decimal Price { get; set; } = -1;
     }
 }

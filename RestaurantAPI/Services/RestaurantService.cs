@@ -44,7 +44,8 @@ namespace RestaurantAPI.Services
                 .Include(r => r.Address)
                 .Include(r => r.Dishes)
                 .FirstOrDefault(r => r.Id == id);
-            if (restaurant is null) throw new NotFoundException("Restaurant not found");
+            if (restaurant is null)
+                throw new NotFoundException("Restaurant not found");
             var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
             return restaurantDto;
         }
