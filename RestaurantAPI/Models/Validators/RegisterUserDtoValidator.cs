@@ -14,9 +14,9 @@ namespace RestaurantAPI.Models.Validators
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
-                .WithMessage("Email field cannot be empty")
+                .WithMessage("'Email' field cannot be empty")
                 .EmailAddress()
-                .WithMessage("Incorect email address");
+                .WithMessage("Incorrect email address");
             RuleFor(x => x.Password)
                 //.Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$")
                 .MinimumLength(6).WithMessage("Password must contain min. 6 characters")
@@ -26,7 +26,7 @@ namespace RestaurantAPI.Models.Validators
                 //.WithMessage("Password must contain min. 6 characters, min. one upper letter, min. one lower letter and min. one digit");
             RuleFor(x => x.ConfirmPassword)
                 .Equal(y => y.Password)
-                .WithMessage("The values of the Confirm Password and the Password fields must be equal");
+                .WithMessage("The values of the 'Confirm Password' and the 'Password' fields must be equal");
             RuleFor(x => x.Email)
                 .Custom((value, context) =>
                 {

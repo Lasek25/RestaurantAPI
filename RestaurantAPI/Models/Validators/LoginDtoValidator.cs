@@ -16,9 +16,9 @@ namespace RestaurantAPI.Validators
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
-                .WithMessage("Email field cannot be empty")
+                .WithMessage("'Email' field cannot be empty")
                 .EmailAddress()
-                .WithMessage("Incorect email address");
+                .WithMessage("Incorrect email address");
         }
 
     }

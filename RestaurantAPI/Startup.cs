@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -66,22 +67,30 @@ namespace RestaurantAPI
                 options.AddPolicy("AgeOver", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
                 options.AddPolicy("CreatedRestaurantsOver", builder => builder.AddRequirements(new CreatedMultipleRestaurantsRequirement(2)));
             });
+            
             services.AddControllers().AddFluentValidation();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestaurantAPI", Version = "v1" });
             });
+            services.AddFluentValidationRulesToSwagger();
+
             services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
+
             services.AddDbContext<RestaurantDbContext>();
             services.AddScoped<RestaurantSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
+
             services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<IDishService, DishService>();
             services.AddScoped<IAccountService, AccountService>();
+
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
+            services.AddScoped<IValidator<CreateRestaurantDto>, CreateRestaurantDtoValidator>();
+
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();

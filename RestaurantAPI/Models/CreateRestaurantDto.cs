@@ -9,21 +9,21 @@ namespace RestaurantAPI.Models
 {
     public class CreateRestaurantDto
     {
-        [Required]
-        [MaxLength(25)]
+        //[Required]
+        //[MaxLength(25)]
         public string Name { get; set; }
         public string Description { get; set; }
         public string Category { get; set; }
         public bool HasDelivery { get; set; }
-        [EmailAddress]
+        //[EmailAddress]
         public string ContactEmail { get; set; }
-        [Phone]
+        //[Phone]
         public string ContactNumber { get; set; }
-        [Required]
-        [MaxLength(50)]
+        //[Required]
+        //[MaxLength(50)]
         public string City { get; set; }
-        [Required]
-        [MaxLength(50)]
+        //[Required]
+        //[MaxLength(50)]
         public string Street { get; set; }
         public string Number { get; set; }
         public string PostCode { get; set; }
