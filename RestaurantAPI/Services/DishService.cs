@@ -68,7 +68,8 @@ namespace RestaurantAPI.Services
             var dish = GetDishById(restaurantId, dishId);
             if (updateDishDto.Description is not null)
                 dish.Description = updateDishDto.Description;
-            dish.Price = updateDishDto.Price;
+            if (updateDishDto.Price >= 0)
+                dish.Price = updateDishDto.Price;
             _dbContext.SaveChanges();
         }
 

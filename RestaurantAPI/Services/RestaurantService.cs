@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RestaurantAPI.Authorization;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Exceptions;
 using RestaurantAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,12 +20,21 @@ namespace RestaurantAPI.Services
         private readonly RestaurantDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILogger<RestaurantService> _logger;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IUserContextService _userContextService;
 
-        public RestaurantService(RestaurantDbContext dbContext, IMapper mapper, ILogger<RestaurantService> logger)
+        public RestaurantService(
+            RestaurantDbContext dbContext, 
+            IMapper mapper, 
+            ILogger<RestaurantService> logger, 
+            IAuthorizationService authorizationService,
+            IUserContextService userContextService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _logger = logger;
+            _authorizationService = authorizationService;
+            _userContextService = userContextService;
         }
 
         public RestaurantDto GeyById(int id)
@@ -32,7 +44,8 @@ namespace RestaurantAPI.Services
                 .Include(r => r.Address)
                 .Include(r => r.Dishes)
                 .FirstOrDefault(r => r.Id == id);
-            if (restaurant is null) throw new NotFoundException("Restaurant not found");
+            if (restaurant is null)
+                throw new NotFoundException("Restaurant not found");
             var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
             return restaurantDto;
         }
@@ -51,6 +64,7 @@ namespace RestaurantAPI.Services
         public int Create(CreateRestaurantDto dto)
         {
             var newRestaurant = _mapper.Map<Restaurant>(dto);
+            newRestaurant.CreatedById = _userContextService.GetUserId;
             _dbContext.Restaurants.Add(newRestaurant);
             _dbContext.SaveChanges();
             return newRestaurant.Id;
@@ -62,6 +76,12 @@ namespace RestaurantAPI.Services
             var restaurant = _dbContext.Restaurants.FirstOrDefault(r => r.Id == id);
             if (restaurant is null)
                 throw new NotFoundException("Restaurant not found");
+            var authorizationResult = _authorizationService.AuthorizeAsync(
+                _userContextService.User, restaurant, new ResourceOperationRequirement(ResourceOperation.Delete)).Result;
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException();
+            }
             _dbContext.Restaurants.Remove(restaurant);
             _dbContext.SaveChanges();
         }
@@ -71,6 +91,13 @@ namespace RestaurantAPI.Services
             var restaurant = _dbContext.Restaurants.FirstOrDefault(r => r.Id == id);
             if (restaurant is null)
                 throw new NotFoundException("Restaurant not found");
+            var authorizationResult = _authorizationService.AuthorizeAsync(
+                _userContextService.User, restaurant, new ResourceOperationRequirement(ResourceOperation.Update)).Result;
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException();
+            }
+
             if (dto.Name is not null)
                 restaurant.Name = dto.Name;
             if (dto.Description is not null)

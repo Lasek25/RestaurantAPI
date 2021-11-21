@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Models;
 using RestaurantAPI.Services;
@@ -11,6 +12,7 @@ namespace RestaurantAPI.Controllers
 {
     [Route("api/restaurant/{restaurantId}/dish")]
     [ApiController]
+    [Authorize]
     public class DishController : ControllerBase
     {
         private readonly IDishService _dishService;
@@ -20,6 +22,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<DishDto>> GetAll([FromRoute] int restaurantId)
         {
             var dishesDtos = _dishService.GetAll(restaurantId);
@@ -27,6 +30,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpGet("{dishId}")]
+        [AllowAnonymous]
         public ActionResult<DishDto> Get([FromRoute] int restaurantId, [FromRoute] int dishId)
         {
             var dishDto = _dishService.Get(restaurantId, dishId);
@@ -34,6 +38,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult CreateDish([FromRoute] int restaurantId, [FromBody] CreateDishDto createDishDto)
         {
             var newDishId = _dishService.Create(restaurantId, createDishDto);
@@ -41,6 +46,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpPut("{dishId}")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Update([FromRoute] int restaurantId, [FromRoute] int dishId, [FromBody] UpdateDishDto updateDishDto)
         {
             _dishService.Update(restaurantId, dishId, updateDishDto);
@@ -48,6 +54,8 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Policy = "CreatedRestaurantsOver")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult DeleteAll([FromRoute] int restaurantId)
         {
             _dishService.DeleteAll(restaurantId);
@@ -55,6 +63,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpDelete("{dishId}")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Delete([FromRoute] int restaurantId, [FromRoute] int dishId)
         {
             _dishService.Delete(restaurantId, dishId);
