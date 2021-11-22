@@ -50,13 +50,18 @@ namespace RestaurantAPI.Services
             return restaurantDto;
         }
 
-        public IEnumerable<RestaurantDto> GetAll()
+        public IEnumerable<RestaurantDto> GetAll(Query query)
         {
-            var restaurants = _dbContext
+            var allRestaurants = _dbContext
                 .Restaurants
                 .Include(r => r.Address)
-                .Include(r => r.Dishes)
+                .Include(r => r.Dishes);
+
+            var restaurants = allRestaurants
+                .Skip(query.PageSize * (query.PageNumber - 1))
+                .Take(query.PageSize)
                 .ToList();
+
             var restaurantsDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
             return restaurantsDtos;
         }
