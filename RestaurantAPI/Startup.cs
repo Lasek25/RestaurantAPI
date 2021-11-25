@@ -90,6 +90,7 @@ namespace RestaurantAPI
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
             services.AddScoped<IValidator<CreateRestaurantDto>, CreateRestaurantDtoValidator>();
+            services.AddScoped<IValidator<Query>, QueryValidator>();
 
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<ErrorHandlingMiddleware>();
